@@ -34,7 +34,9 @@ of a block to be deleted, must be at least 1 less than \code{del.end}}
 of a block to be deleted, must be at least 1 more than \code{del.start}}
 }
 \value{
-An \eqn{m \times m} lower-triangular \verb{matrix`` with \eqn{m = n} in case of }cholUpdateRankOne()\verb{, \eqn{m = n - 1} in case of }cholUpdateDel()\verb{, and, \eqn{m = n - n_k} in case of }cholUpdateDelBlock()` where \eqn{n_k} is
+An \eqn{m \times m} lower-triangular \code{matrix} with \eqn{m = n} in
+case of \code{cholUpdateRankOne()}, \eqn{m = n - 1} in case of \code{cholUpdateDel()},
+and, \eqn{m = n - n_k} in case of \code{cholUpdateDelBlock()} where \eqn{n_k} is
 the size of the block removed.
 }
 \description{
@@ -86,8 +88,8 @@ cholA2 <- cholUpdateDelBlock(cholA, start_ind, end_ind, lower = FALSE)
 print(all(abs(cholA1 - cholA2) < 1E-9))
 }
 \references{
-Oswin Krause and Christian Igel. 2015. A More Efficient Rank-one
-Covariance Matrix Update for Evolution Strategies. In \emph{Proceedings of the
+Oswin Krause and Christian Igel. 2015. "A More Efficient Rank-one
+Covariance Matrix Update for Evolution Strategies". In \emph{Proceedings of the
 2015 ACM Conference on Foundations of Genetic Algorithms XIII} (FOGA '15).
 Association for Computing Machinery, New York, NY, USA, 129-136.
 \doi{10.1145/2725494.2725496}.
