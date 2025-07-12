@@ -82,6 +82,28 @@ void copyMatrixDelRowBlock(double *M1, int nRowM1, int nColM1, double *M2, int e
   }
 }
 
+// Copy a matrix excluding a row block in every n-th row block
+void copyMatrixDelRowBlock_vc(double *M1, int nRowM1, int nColM1, double *M2, int exclude_start, int exclude_end, int rep){
+
+  int i = 0, j = 0, new_index = 0;
+
+  if(exclude_start > exclude_end || exclude_start == exclude_end){
+    perror("Start index must be at least 1 less than End index.");
+  }
+
+  if(exclude_start < 0 || exclude_end > nRowM1*rep){
+    perror("Row index to exclude is out of bounds.");
+  }else{
+    for(j = 0; j < nColM1; j++){
+      for(i = 0; i < nRowM1; i++){
+        if(i % rep < exclude_start || i % rep > exclude_end){
+          M2[new_index++] = M1[j*nRowM1 + i];
+        }
+      }
+    }
+  }
+}
+
 // Copy a matrix deleting ith row and jth column
 void copyMatrixDelRowCol(double *M1, int nRowM1, int nColM1, double *M2, int del_indexRow, int del_indexCol){
 
@@ -96,6 +118,43 @@ void copyMatrixDelRowCol(double *M1, int nRowM1, int nColM1, double *M2, int del
       if(j == del_indexCol) continue;
       for(i = 0; i < nRowM1; i++){
         if(i == del_indexRow) continue;
+        M2[new_index++] = M1[j*nRowM1 + i];
+      }
+    }
+  }
+}
+
+// Copy a matrix deleting ith row and jth column for every n-th block
+void copyMatrixDelRowCol_vc(double *M1, int nRowM1, int nColM1, double *M2, int del_indexRow, int del_indexCol, int n){
+
+  int i = 0, j = 0, new_index = 0;
+
+  if(del_indexRow < 0 || del_indexRow > nRowM1){
+    perror("Row index to delete is out of bounds.");
+  }else if(del_indexCol < 0 || del_indexCol > nColM1){
+    perror("Column index to delete is out of bounds.");
+  }else{
+    for(j = 0; j < nColM1; j++){
+      if(j % n == del_indexCol) continue;
+      for(i = 0; i < nRowM1; i++){
+        if(i % n == del_indexRow) continue;
+        M2[new_index++] = M1[j*nRowM1 + i];
+      }
+    }
+  }
+}
+
+// Copy a matrix excluding the i-th row for every n-th block
+void copyMatrixDelRow_vc(double *M1, int nRowM1, int nColM1, double *M2, int exclude_index, int n){
+
+  int i = 0, j = 0, new_index = 0;
+
+  if(exclude_index < 0 || exclude_index > nRowM1){
+    perror("Row index to exclude is out of bounds.");
+  }else{
+    for(j = 0; j < nColM1; j++){
+      for(i = 0; i < nRowM1; i++){
+        if(i % n == exclude_index) continue;
         M2[new_index++] = M1[j*nRowM1 + i];
       }
     }
@@ -126,6 +185,37 @@ void copyMatrixDelRowColBlock(double *M1, int nRowM1, int nColM1, double *M2,
       if(j < delCol_start || j > delCol_end){
         for(i = 0; i < nRowM1; i++){
           if(i < delRow_start || i > delRow_end){
+            M2[new_index++] = M1[j*nRowM1 + i];
+          }
+        }
+      }
+    }
+  }
+}
+
+// Copy a matrix deleting a row and column block within each repxrep block
+void copyMatrixDelRowColBlock_vc(double *M1, int nRowM1, int nColM1, double *M2, int delRow_start, int delRow_end,
+                                 int delCol_start, int delCol_end, int rep){
+
+  int i = 0, j = 0, new_index = 0;
+
+  if(delRow_start > delRow_end || delRow_start == delRow_end){
+    perror("Row Start index must be at least 1 less than End index.");
+  }
+
+  if(delCol_start > delCol_end || delCol_start == delCol_end){
+    perror("Column Start index must be at least 1 less than End index.");
+  }
+
+  if(delRow_start < 0 || delRow_end > nRowM1){
+    perror("Row indices to delete are out of bounds.");
+  }else if(delCol_start < 0 || delCol_end > nColM1){
+    perror("Column indices to delete is out of bounds.");
+  }else{
+    for(j = 0; j < nColM1; j++){
+      if(j % rep < delCol_start || j % rep > delCol_end){
+        for(i = 0; i < nRowM1; i++){
+          if(i % rep < delRow_start || i % rep > delRow_end){
             M2[new_index++] = M1[j*nRowM1 + i];
           }
         }
@@ -541,7 +631,7 @@ void printMtrx(double *m, int nRow, int nCol){
   for(i = 0; i < nRow; i++){
     Rprintf("\t");
     for(j = 0; j < nCol; j++){
-      Rprintf("%.2f\t", m[j*nRow+i]);
+      Rprintf("% .2f\t", m[j*nRow+i]);
     }
     Rprintf("\n");
   }
@@ -626,6 +716,148 @@ void spCorFull(double *D, int n, double *theta, std::string &corfn, double *C){
     perror("c++ error: corfn is not correctly specified");
   }
 }
+
+// Create nxn full spatial correlation matrix
+void spCorFull2(int n, int p, double *coords_sp, double *theta, std::string &corfn, double *C){
+  int i, j, k;
+  double sp_dist;
+
+  for(i = 0; i < n; i++){
+    for(j = i; j < n; j++){
+      sp_dist = 0.0;
+
+      // find spatial distance
+      for(k = 0; k < p; k++){
+        sp_dist += pow(coords_sp[k * n + i] - coords_sp[k * n + j], 2);
+      }
+      sp_dist = sqrt(sp_dist);
+
+      // evaluate correlation kernel
+      if(corfn == "exponential"){
+        C[i * n + j] = theta[0] * exp(-1.0 * theta[0] * sp_dist);
+        C[j * n + i] = C[i * n + j];
+      }else if(corfn == "matern"){
+        if(sp_dist * theta[0] > 0.0){
+          C[i * n + j] = pow(sp_dist * theta[0], theta[1]) / (pow(2, theta[1] - 1) * gammafn(theta[1])) * bessel_k(sp_dist * theta[0], theta[1], 1.0);
+          C[j * n + i] = C[i * n + j];
+        }else{
+          C[i * n + j] = 1.0;
+        }
+      }else{
+        perror("c++ error: corfn is not correctly specified");
+      }
+
+    }
+  }
+}
+
+// Create full spatial-temporal correlation matrix
+void sptCorFull(int n, int p, double *coords_sp, double *coords_tm, double *theta, std::string &corfn, double *C){
+  int i, j, k;
+  double sp_dist, tm_dist;
+
+  for(i = 0; i < n; i++){
+    for(j = i; j < n; j++){
+      sp_dist = 0.0;
+      tm_dist = 0.0;
+
+      // find spatial distance
+      for(k = 0; k < p; k++){
+        sp_dist += pow(coords_sp[k * n + i] - coords_sp[k * n + j], 2);
+      }
+      sp_dist = sqrt(sp_dist);
+
+      // find temporal distance
+      tm_dist = pow(coords_tm[i] - coords_tm[j], 2);
+      tm_dist = sqrt(tm_dist);
+
+      // evaluate correlation kernel
+      if(corfn == "gneiting-decay"){
+        C[i * n + j] = gneiting_spt_decay(sp_dist, tm_dist, theta[0], theta[1]);
+        C[j * n + i] = C[i * n + j];
+      }else{
+        perror("c++ error: corfn is incorrectly specified");
+      }
+
+    }
+  }
+}
+
+// Create nxn' spatial cross-correlation matrix
+void spCorCross(int n, int n_prime, int p, double *coords_sp, double *coords_sp_prime, double *theta, std::string &corfn, double *C){
+  int i, j, k;
+  double sp_dist;
+
+  for(i = 0; i < n; i++){
+    for(j = 0; j < n_prime; j++){
+      sp_dist = 0.0;
+
+      // find spatial distance
+      for(k = 0; k < p; k++){
+        sp_dist += pow(coords_sp[k * n + i] - coords_sp_prime[k * n_prime + j], 2);
+      }
+      sp_dist = sqrt(sp_dist);
+
+      // evaluate correlation kernel
+      if(corfn == "exponential"){
+        C[j * n + i] = theta[0] * exp(-1.0 * theta[0] * sp_dist);
+      }else if(corfn == "matern"){
+        if(sp_dist * theta[0] > 0.0){
+          C[j * n + i] = pow(sp_dist * theta[0], theta[1]) / (pow(2, theta[1] - 1) * gammafn(theta[1])) * bessel_k(sp_dist * theta[0], theta[1], 1.0);
+        }else{
+          C[j * n + i] = 1.0;
+        }
+      }else{
+        perror("c++ error: corfn is not correctly specified");
+      }
+
+    }
+  }
+}
+
+// Create nxn' cross-correlation spatial-temporal matrix
+void sptCorCross(int n, int n_prime, int p, double *coords_sp, double *coords_tm, double *coords_sp_prime, double *coords_tm_prime, double *theta, std::string &corfn, double *C){
+  int i, j, k;
+  double sp_dist, tm_dist;
+
+  for(i = 0; i < n; i++){
+    for(j = 0; j < n_prime; j++){
+      sp_dist = 0.0;
+      tm_dist = 0.0;
+
+      // find spatial distance
+      for(k = 0; k < p; k++){
+        sp_dist += pow(coords_sp[k * n + i] - coords_sp_prime[k * n_prime + j], 2);
+      }
+      sp_dist = sqrt(sp_dist);
+
+      // find temporal distance
+      tm_dist = pow(coords_tm[i] - coords_tm_prime[j], 2);
+      tm_dist = sqrt(tm_dist);
+
+      // evaluate correlation kernel
+      if(corfn == "gneiting-decay"){
+        C[j * n + i] = gneiting_spt_decay(sp_dist, tm_dist, theta[0], theta[1]);
+      }else{
+        perror("c++ error: corfn is incorrectly specified");
+      }
+
+    }
+  }
+}
+
+
+// gneiting-decay spatio-temporal correlation function (Gneiting and Guttorp 2010)
+double gneiting_spt_decay(double dist_s, double dist_t, double phi_s, double phi_t){
+
+  double dist_t_sq = pow(dist_t, 2);
+  double tmp = 0.0;
+  tmp = (phi_t * dist_t_sq) + 1.0;
+
+  return (1.0 / tmp) * exp(- (phi_s * dist_s) / sqrt(tmp));
+
+}
+
 
 // Fill a double vector with zeros
 void zeros(double *x, int length){
@@ -844,5 +1076,162 @@ double qGPD(double p, double k, double sigma){
   out = sigma * expm1(- k * log1p(- p)) / k;
 
   return out;
+
+}
+
+// WARNING: the following function has the transpose case erroneous
+// Function for sparse matrix-vector multiplication for varying coefficients models
+void lmulv_XTilde_VC(const char *trans, int n, int r, double *XTilde, double *v, double *res){
+
+  int i = 0, j = 0;
+  const int inc_n = n;
+
+  char const *yestrans = "T";
+  char const *notrans = "N";
+
+  if(trans == notrans){
+    for(i = 0; i < n; i++){
+      res[i] = F77_CALL(ddot)(&r, &XTilde[i], &inc_n, &v[i], &inc_n);
+    }
+  }else if(trans == yestrans){
+    for(i = 0; i < r; i++){
+      for(j = 0; j < n; j++){
+        res[i*n + j] = XTilde[i*n + j] * v[j];
+      }
+    }
+  }else{
+    perror("lmulv_XTilde_VC: Invalid transpose argument.");
+  }
+
+}
+
+// Function for sparse matrix-matrix multiplication for varying coefficients models
+void lmulm_XTilde_VC(const char *trans, int n, int r, int k, double *XTilde, double *A, double *res){
+
+  int i = 0, j = 0, l = 0;
+  const int inc_n = n;
+
+  char const *yestrans = "T";
+  char const *notrans = "N";
+
+  if(trans == notrans){
+    for(i = 0; i < n; i++){
+      for(j = 0; j < k; j++){
+        res[j * n + i] = F77_CALL(ddot)(&r, &XTilde[i], &inc_n, &A[j * n * r + i], &inc_n);
+      }
+    }
+  }else if(trans == yestrans){
+    for(i = 0; i < r; i++){
+      for(j = 0; j < n; j++){
+        for(l = 0; l < k; l++){
+          res[n*r*l + i*n + j] = XTilde[i*n + j] * A[n*l + j];
+        }
+      }
+    }
+  }else{
+    perror("lmulm_XTilde_VC: Invalid transpose argument.");
+  }
+
+}
+
+void rmul_Vz_XTildeT(int n, int r, double *XTilde, double *Vz, double *res, std::string &processtype){
+
+  int i = 0, j = 0, k = 0, l = 0;
+  int nr = n * r;
+
+  if(processtype == "independent.shared" || processtype == "multivariate"){
+    for(l = 0; l < r; l++){
+      for(i = 0; i < n; i ++){
+        for(j = 0; j < n; j++){
+          res[n*r*j + l*n + i] = Vz[j*n + i] * XTilde[l*n + j];
+        }
+      }
+    }
+  }else if(processtype == "independent"){
+    for(l = 0; l < r; l++){
+      for(i = 0; i < n; i ++){
+        for(j = 0; j < n; j++){
+          res[n*r*j + l*n + i] = Vz[n*n*l + j*n + i] * XTilde[l*n + j];
+        }
+      }
+    }
+  }else if(processtype == "multivariate2"){
+    for(l = 0; l < r; l++){
+      for(j = 0; j < n; j++){
+        for(i = 0; i < n; i++){
+          for(k = 0; k < r; k++){
+            res[j*nr + l*n + i] += XTilde[k*n + j] * Vz[(k*n + j)*nr + l*n + i];
+          }
+        }
+      }
+    }
+  }
+
+}
+
+// Function for sparse-addition of t(XTilde) to a nr x n matrix
+void addXTildeTransposeToMatrixByRow(double *XTilde, double *B, int n, int r){
+
+  int i = 0, j = 0;
+  int nr = n * r;
+
+  for(i = 0; i < n; i++){
+    for(j = 0; j < r; j++){
+      B[i*nr + j*n + i] += XTilde[j*n + i];
+    }
+  }
+
+}
+
+// Function for drawing a sample from a Inverse-Wishart distribution
+void rInvWishart(int r, double nu, double *cholinvIWscale, double *Sigma, double *tmp_rr){
+
+  int info = 0;
+  int i = 0, j = 0;
+  int rr = r * r;
+  char const *lower = "L";
+  char const *ntran = "N";
+  // char const *ndiag = "N";
+  char const *ytran = "T";
+  // char const *lside = "L";
+  char const *rside = "R";
+  const double one = 1.0;
+  const double zero = 0.0;
+
+  // Draw a sample from a Wishart distribution: W_r(nu, I)
+  // Using Bartlett decomposition (Bartlett 1939) and
+  // rectangular coordinates (Mahalanobis, Bose, and Roy 1937)
+
+  zeros(tmp_rr, rr);
+  // Fill diagonal with chi-square distributed values
+  for(i = 0; i < r; i++){
+    tmp_rr[i * r + i] = sqrt(rchisq(nu-i));   //sqrt(rgamma(0.5*(nu - i), 2.0));
+  }
+
+  // Fill lower triangle with standard normal variates
+  for(i = 1; i < r; i++){
+    for(j = 0; j < i; j++){
+      tmp_rr[j * r + i] = rnorm(0.0, 1.0);
+    }
+  }
+
+  // Sigma = tmp_rr * t(tmp_rr)
+  F77_NAME(dsyrk)(lower, ntran, &r, &r, &one, tmp_rr, &r, &zero, Sigma, &r FCONE FCONE);
+  // Sigma = cholinvIWscale * Sigma * t(cholinvIWscale)
+  mkLT(cholinvIWscale, r);
+  // F77_NAME(dtrmm)(lside, lower, ntran, ndiag, &r, &r, &one, cholinvIWscale, &r, Sigma, &r FCONE FCONE FCONE FCONE);
+  // F77_NAME(dtrmm)(rside, lower, ytran, ndiag, &r, &r, &one, cholinvIWscale, &r, Sigma, &r FCONE FCONE FCONE FCONE);
+  F77_NAME(dsymm)(rside, lower, &r, &r, &one, Sigma, &r, cholinvIWscale, &r, &zero, tmp_rr, &r FCONE FCONE);
+  F77_NAME(dgemm)(ntran, ytran, &r, &r, &r, &one, tmp_rr, &r, cholinvIWscale, &r, &zero, Sigma, &r FCONE FCONE);
+
+  F77_NAME(dpotrf)(lower, &r, Sigma, &r, &info FCONE); if(info != 0){perror("c++ error: rInvWishart dpotrf failed\n");}
+  F77_NAME(dpotri)(lower, &r, Sigma, &r, &info FCONE); if(info != 0){perror("c++ error: rInvWishart dpotri failed\n");}
+
+  // make Sigma symmetric
+  for(i = 1; i < r; i++){
+    for(j = 0; j < i; j++){
+      Sigma[i * r + j] = Sigma[j * r + i];
+    }
+  }
 
 }

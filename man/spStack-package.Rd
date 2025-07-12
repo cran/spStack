@@ -32,7 +32,7 @@ posterior distributions.
 }
 \details{
 \tabular{ll}{ Package: \tab spStack\cr Type: \tab Package\cr
-Version: \tab 0.1.0\cr License: \tab GPL-3\cr }
+Version: \tab 1.1.0\cr License: \tab GPL-3\cr }
 Accepts a formula, e.g., \code{y~x1+x2}, for most regression models
 accompanied by candidate values of spatial process parameters, and returns
 posterior samples of the regression coefficients and the latent spatial
@@ -41,11 +41,11 @@ proceed from these samples. Main functions are - \cr \code{\link[=spLMexact]{spL
 \code{\link[=spGLMexact]{spGLMexact()}}\cr \code{\link[=spLMstack]{spLMstack()}}\cr \code{\link[=spGLMstack]{spGLMstack()}}
 }
 \references{
-Zhang L, Tang W, Banerjee S (2024). "Bayesian Geostatistics Using
+Zhang L, Tang W, Banerjee S (2025). "Bayesian Geostatistics Using
 Predictive Stacking." \cr
 \doi{10.48550/arXiv.2304.12414}.
 
-Pan S, Zhang L, Bradley JR, Banerjee S (2024). "Bayesian
+Pan S, Zhang L, Bradley JR, Banerjee S (2025). "Bayesian
 Inference for Spatial-temporal Non-Gaussian Data Using Predictive Stacking."
 \doi{10.48550/arXiv.2406.04655}.
 
@@ -56,7 +56,6 @@ Analysis}, \strong{13}(3), 917-1007. \doi{10.1214/17-BA1091}.
 \seealso{
 Useful links:
 \itemize{
-  \item \url{https://github.com/SPan-18/spStack-dev}
   \item \url{https://span-18.github.io/spStack-dev/}
   \item Report bugs at \url{https://github.com/SPan-18/spStack-dev/issues}
 }

@@ -1,4 +1,12 @@
-# spStack <img src="man/figures/logo.png" align="right" height="120" alt="" />
+# spStack <a href="https://span-18.github.io/spStack-dev/"><img src="man/figures/logo.png" align="right" height="138" alt="spStack website" /></a>
+
+<!-- badges: start -->
+[![CRAN_Status_Badge](https://www.r-pkg.org/badges/version/spStack?color=blue)](https://CRAN.R-project.org/package=spStack)
+[![Downloads](https://cranlogs.r-pkg.org/badges/spStack?color=orange)](https://CRAN.R-project.org/package=spStack)
+[![R-CMD-check](https://github.com/SPan-18/spStack-dev/actions/workflows/Standard-CI.yaml/badge.svg)](https://github.com/SPan-18/spStack-dev/actions/workflows/Standard-CI.yaml)
+<!-- badges: end -->
+
+## Overview
 spStack is an R package that delivers Bayesian inference for point-referenced spatial data by assimilating posterior inference over a collection of candidate models using stacking of predictive densities. Currently, it supports point-referenced Gaussian, Poisson, binomial and binary outcomes. Users can supply candidate values of spatial process parameters and certain auxiliary model parameters, based on which the collection of models will be created. spStack utilizes the Bayesian conjugate linear modelling framework for Gaussian data and the generalized conjugate multivariate distribution theory for non-Gaussian exponential family data. Learn more in `vignette("spStack")`. Technical details of the methodology are available in [Zhang, Tang, and Banerjee 2024](https://doi.org/10.48550/arXiv.2304.12414) and [Pan, Zhang, Bradley, and, Banerjee 2024](https://doi.org/10.48550/arXiv.2406.04655).
 
 ## Installation
@@ -19,7 +27,7 @@ To install the package from source, download the tarball *spStack_X.X.XX.tar.gz*
 install.packages("spStack_X.X.XX.tar.gz", type = "source", repos = NULL)
 ```
 
-Please note that the package is written in C/C++ and hence contains a `Makevars` file for cross-platform portability. So, it is important to set the correct path to FORTRAN libraries as well as BLAS and LAPACK on your computer. For example, if you are working on MacOS, create a file `~.R/Makevars` and set global configurations for the libraries to link with R. The following is an example of such a Makevars file.
+Note that the package is written in C++ with calls to FORTRAN routines and hence contains a `Makevars` file for cross-platform portability. So, it is important to set the correct path to FORTRAN libraries as well as BLAS and LAPACK on your computer. For example, if you are working on MacOS, create a file `~.R/Makevars` and set global configurations for the libraries to link with R. The following is an example of such a Makevars file.
 ```bash
 # Set Fortran library paths
 FLIBS = -L/opt/homebrew/opt/gcc/lib/gcc/14 -lgfortran -lquadmath -lm
@@ -38,4 +46,4 @@ library(spStack)
 View the vignette by running `vignette("spStack")` and see example code to implement predictive stacking for different Bayesian hierarchical spatial models.
 
 ## Acknowledgement
-The graphics used in the logo has been obtained from the page [Gaussian RF](https://www.math.umd.edu/~bnk/CLIP/clip.gauss.htm) (Boris Kozintsev, 1999). It represents a realization of an isotropic Gaussian random field under Matérn correlation function with parameters 5 and 2.
+The graphics used in the logo has been obtained from the page [Gaussian RF](https://www.math.umd.edu/~bnk/CLIP/clip.gauss.htm) (Boris Kozintsev, 1999). It represents a realization of an isotropic Gaussian random field under the Matérn correlation function with decay and smoothness parameters 5 and 2, respectively.

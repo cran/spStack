@@ -10,13 +10,22 @@ void copyMatrixDelRowBlock(double *M1, int nRowM1, int nColM1, double *M2, int e
 
 void copyMatrixDelRowCol(double *M1, int nRowM1, int nColM1, double *M2, int del_indexRow, int del_indexCol);
 
+void copyMatrixDelRowCol_vc(double *M1, int nRowM1, int nColM1, double *M2, int del_indexRow, int del_indexCol, int rep);
+
+void copyMatrixDelRow_vc(double *M1, int nRowM1, int nColM1, double *M2, int exclude_index, int n);
+
 void copyMatrixDelRowColBlock(double *M1, int nRowM1, int nColM1, double *M2,
                               int delRow_start, int delRow_end, int delCol_start, int delCol_end);
 
 void copyMatrixRowBlock(double *M1, int nRowM1, int nColM1, double *M2, int copy_start, int copy_end);
 
+void copyMatrixDelRowBlock_vc(double *M1, int nRowM1, int nColM1, double *M2, int exclude_start, int exclude_end, int rep);
+
 void copyMatrixRowColBlock(double *M1, int nRowM1, int nColM1, double *M2,
                            int copyCol_start, int copyCol_end, int copyRow_start, int copyRow_end);
+
+void copyMatrixDelRowColBlock_vc(double *M1, int nRowM1, int nColM1, double *M2, int delRow_start, int delRow_end,
+                                 int delCol_start, int delCol_end, int rep);
 
 void copyMatrixColToVec(double *M, int nRowM, int nColM, double *vec, int copy_index);
 
@@ -70,6 +79,17 @@ void spCorLT(double *D, int n, double *theta, std::string &corfn, double *C);
 
 void spCorFull(double *D, int n, double *theta, std::string &corfn, double *C);
 
+void spCorFull2(int n, int p, double *coords_sp, double *theta, std::string &corfn, double *C);
+
+void sptCorFull(int n, int p, double *coords_sp, double *coords_tm, double *theta, std::string &corfn, double *C);
+
+void spCorCross(int n, int n_prime, int p, double *coords_sp, double *coords_sp_prime, double *theta, std::string &corfn, double *C);
+
+void sptCorCross(int n, int n_prime, int p, double *coords_sp, double *coords_tm,
+                 double *coords_sp_prime, double *coords_tm_prime, double *theta, std::string &corfn, double *C);
+
+double gneiting_spt_decay(double dist_s, double dist_t, double phi_s, double phi_t);
+
 void zeros(double *x, int length);
 
 void zeros(int *x, int length);
@@ -84,3 +104,13 @@ void fitGeneralParetoDist(double *x, int n, int wip, int min_grid_pts, double *r
 double lx(double b, double *x, int n);
 
 double qGPD(double p, double k, double sigma);
+
+void lmulv_XTilde_VC(const char *trans, int n, int r, double *XTilde, double *v, double *res);
+
+void lmulm_XTilde_VC(const char *trans, int n, int r, int k, double *XTilde, double *A, double *res);
+
+void rmul_Vz_XTildeT(int n, int r, double *XTilde, double *Vz, double *res, std::string &processtype);
+
+void addXTildeTransposeToMatrixByRow(double *XTilde, double *B, int n, int r);
+
+void rInvWishart(int r, double nu, double *cholinvIWscale, double *Sigma, double *tmp_rr);

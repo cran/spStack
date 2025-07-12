@@ -4,13 +4,15 @@
 #' distribution to obtain final posterior samples that can be used for
 #' subsequent analysis. This function applies on outputs of functions
 #' [spLMstack()] and [spGLMstack()].
-#' @param mod_out an object of class `spLMstack` or `spGLMstack`.
+#' @param mod_out an object that is an output of a model fit or a prediction
+#' task, i.e., the class should be either `spLMstack`, 'pp.spLMstack',
+#' `spGLMstack`, `pp.spGLMstack`, `stvcGLMexact`, or `pp.stvcGLMexact`.
 #' @param n.samples (optional) If missing, inherits the number
 #' of posterior samples from the original output. Otherwise, it specifies
 #' number of posterior samples to draw from the stacked posterior. If it exceeds
-#' the number of posterior draws used in the original function, then a warning
-#' is thrown and the samples are obtained by resampling. It is recommended, to
-#' run the original function with enough samples.
+#' the number of posterior draws used in the original function, then a message
+#' is thrown and the samples are obtained by resampling. We recommended running
+#' the original model fit/prediction with enough samples.
 #' @return An object of class \code{stacked_posterior}, which is a list that
 #' includes the following tags -
 #' \describe{
@@ -18,12 +20,7 @@
 #' \item{z}{samples of the spatial random effects from the stacked joint
 #' posterior.}
 #' }
-#' In case of model output of class `spLMstack`, the list additionally contains
-#' `sigmaSq` which are the samples of the variance parameter from the stacked
-#' joint posterior of the spatial linear model. For model output of class
-#' `spGLMstack`, the list also contains `xi` which are the samples of the
-#' fine-scale variation term from the stacked joint posterior of the spatial
-#' generalized linear model.
+#' The list may also include other scale parameters corresponding to the model.
 #' @details After obtaining the optimal stacking weights
 #' \eqn{\hat{w}_1, \ldots, \hat{w}_G}, posterior inference of quantities of
 #' interest subsequently proceed from the *stacked* posterior,
@@ -36,6 +33,7 @@
 #' Sudipto Banerjee <sudipto@ucla.edu>
 #' @seealso [spLMstack()], [spGLMstack()]
 #' @examples
+#' set.seed(1234)
 #' data(simGaussian)
 #' dat <- simGaussian[1:100, ]
 #'
@@ -66,44 +64,61 @@ stackedSampler <- function(mod_out, n.samples){
   }else{
     if(n.samples > n_post){
       warning("Number of samples required exceeds number of posterior samples.
-              To prevent resampling, run spLMstack() with higher n.samples.")
+              To prevent resampling, run *stack() with higher n.samples.")
       ids <- sample(1:n_post, size = n.samples, replace = TRUE)
     }else{
     ids <- sample(1:n_post, size = n.samples, replace = FALSE)
     }
   }
 
-  if(inherits(mod_out, 'spLMstack')){
+  if(inherits(mod_out, c('spLMstack', 'pp.spLMstack',
+                         'spGLMstack', 'pp.spGLMstack',
+                         'stvcGLMstack', 'pp.stvcGLMstack'))){
 
-    post_samples <- sapply(1:n.samples, function(x){
-      model_id <- sample(1:mod_out$n.models, 1, prob = mod_out$stacking.weights)
-      return(c(mod_out$samples[[model_id]]$beta[, ids[x]],
-               mod_out$samples[[model_id]]$sigmaSq[ids[x]],
-               mod_out$samples[[model_id]]$z[, ids[x]]))
-    })
-    stacked_samps <- list(beta = post_samples[1:p_obs, ],
-                          sigmaSq = post_samples[(p_obs + 1), ],
-                          z = post_samples[(p_obs + 1) + 1:n_obs, ])
-    rownames(stacked_samps[['beta']]) = mod_out$X.names
+    nModels <- mod_out$n.models
+    model_id <- sample(seq_len(nModels), n.samples, replace = TRUE, prob = mod_out$stacking.weights)
 
-  }else if(inherits(mod_out, 'spGLMstack')){
+    param_names <- names(mod_out$samples[[1L]])
+    result <- vector("list", length(param_names))
+    names(result) <- param_names
 
-    post_samples <- sapply(1:n.samples, function(x){
-      model_id <- sample(1:mod_out$n.models, 1, prob = mod_out$stacking.weights)
-      return(c(mod_out$samples[[model_id]]$beta[, ids[x]],
-               mod_out$samples[[model_id]]$z[, ids[x]],
-               mod_out$samples[[model_id]]$xi[, ids[x]]))
-    })
-    stacked_samps <- list(beta = post_samples[1:p_obs, ],
-                          z = post_samples[(p_obs + 1:n_obs), ],
-                          xi = post_samples[(p_obs + n_obs) + 1:n_obs, ])
-    rownames(stacked_samps[['beta']]) = mod_out$X.names
+    for(param in param_names){
+
+      # Determine shape of the parameter
+      first_param <- mod_out$samples[[1]][[param]]
+      is_matrix <- is.matrix(first_param)
+      d <- if (is_matrix) nrow(first_param) else 1
+
+      # Preallocate
+      if(is_matrix){
+        result[[param]] <- matrix(NA, nrow = d, ncol = n.samples)
+      }else{
+        result[[param]] <- numeric(n.samples)
+      }
+
+      for(i in seq_len(n.samples)){
+        m <- model_id[i]
+        s <- ids[i]
+        val <- mod_out$samples[[m]][[param]]
+        if(is.matrix(val)){
+          result[[param]][, i] <- val[, s]
+        }else{
+          result[[param]][i] <- val[s]
+        }
+      }
+
+    }
+
+    if("beta" %in% names(result)){
+      rownames(result[['beta']]) <- mod_out$X.names
+    }
 
   }else{
-    stop("Invalid model output class. Input must be an output from either
-         spLMstack() or spGLMstack() functions.")
+    stop("Invalid model output class. Input must be an output from either of the
+         following functions: spLMstack(), spGLMstack(), stvcGLMstack().")
   }
 
-    class(stacked_samps) <- "stacked_posterior"
-    return(stacked_samps)
+  class(result) <- "stacked_posterior"
+  return(result)
+
 }

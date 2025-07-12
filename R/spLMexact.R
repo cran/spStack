@@ -268,7 +268,7 @@ spLMexact <- function(formula, data = parent.frame(), coords, cor.fn, priors,
   deltasq <- 0
 
   if(missing(noise_sp_ratio)){
-    warning("noise_sp_ratio not supplied. Using noise_sp_ratio = 1.")
+    message("noise_sp_ratio not supplied. Using noise_sp_ratio = 1.")
     deltasq = 1
   }else{
     deltasq <- noise_sp_ratio
@@ -328,15 +328,19 @@ spLMexact <- function(formula, data = parent.frame(), coords, cor.fn, priors,
   out$X.names <- X.names
   out$coords <- coords
   out$cor.fn <- cor.fn
-  out$beta.prior.norm <- beta.Norm
+  out$priors <- list(beta.Norm = list(mu = beta.Norm[[1]],
+                                      V = matrix(beta.Norm[[2]], p, p)),
+                     sigma.sq.IG = sigma.sq.IG)
+  out$n.samples <- n.samples
   out$samples <- samps[c("beta", "sigmaSq", "z")]
   if(loopd){
+    out$loopd.method <- loopd.method
     out$loopd <- samps[["loopd"]]
   }
   if(cor.fn == 'matern'){
-    out$model.params <- c(phi, nu, deltasq)
+    out$model.params <- list(phi = phi, nu = nu, noise_sp_ratio = deltasq)
   }else{
-    out$model.params <- c(phi, deltasq)
+    out$model.params <- list(phi = phi, noise_sp_ratio = deltasq)
   }
   out$run.time <- run.time
 

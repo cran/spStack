@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+
+
+<title>Technical Overview</title>
+
+<script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
+// be compatible with the behavior of Pandoc < 2.8).
+document.addEventListener('DOMContentLoaded', function(e) {
+  var hs = document.querySelectorAll("div.section[class*='level'] > :first-child");
+  var i, h, a;
+  for (i = 0; i < hs.length; i++) {
+    h = hs[i];
+    if (!/^h[1-6]$/i.test(h.tagName)) continue;  // it should be a header h1-h6
+    a = h.attributes;
+    while (a.length > 0) h.removeAttribute(a[0].name);
+  }
+});
+</script>
+
+<style type="text/css">
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+span.underline{text-decoration: underline;}
+div.column{display: inline-block; vertical-align: top; width: 50%;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+</style>
+
+
+
+
+
+
+<style type="text/css">
+
+div.csl-bib-body { }
+div.csl-entry {
+clear: both;
+margin-bottom: 0em;
+}
+.hanging div.csl-entry {
+margin-left:2em;
+text-indent:-2em;
+}
+div.csl-left-margin {
+min-width:2em;
+float:left;
+}
+div.csl-right-inline {
+margin-left:2em;
+padding-left:1em;
+}
+div.csl-indent {
+margin-left: 2em;
+}
+</style>
+
+<style type="text/css">body {
+background-color: #fff;
+margin: 1em auto;
+max-width: 700px;
+overflow: visible;
+padding-left: 2em;
+padding-right: 2em;
+font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+font-size: 14px;
+line-height: 1.35;
+}
+#TOC {
+clear: both;
+margin: 0 0 10px 10px;
+padding: 4px;
+width: 400px;
+border: 1px solid #CCCCCC;
+border-radius: 5px;
+background-color: #f6f6f6;
+font-size: 13px;
+line-height: 1.3;
+}
+#TOC .toctitle {
+font-weight: bold;
+font-size: 15px;
+margin-left: 5px;
+}
+#TOC ul {
+padding-left: 40px;
+margin-left: -1.5em;
+margin-top: 5px;
+margin-bottom: 5px;
+}
+#TOC ul ul {
+margin-left: -2em;
+}
+#TOC li {
+line-height: 16px;
+}
+table {
+margin: 1em auto;
+border-width: 1px;
+border-color: #DDDDDD;
+border-style: outset;
+border-collapse: collapse;
+}
+table th {
+border-width: 2px;
+padding: 5px;
+border-style: inset;
+}
+table td {
+border-width: 1px;
+border-style: inset;
+line-height: 18px;
+padding: 5px 5px;
+}
+table, table th, table td {
+border-left-style: none;
+border-right-style: none;
+}
+table thead, table tr.even {
+background-color: #f7f7f7;
+}
+p {
+margin: 0.5em 0;
+}
+blockquote {
+background-color: #f6f6f6;
+padding: 0.25em 0.75em;
+}
+hr {
+border-style: solid;
+border: none;
+border-top: 1px solid #777;
+margin: 28px 0;
+}
+dl {
+margin-left: 0;
+}
+dl dd {
+margin-bottom: 13px;
+margin-left: 13px;
+}
+dl dt {
+font-weight: bold;
+}
+ul {
+margin-top: 0;
+}
+ul li {
+list-style: circle outside;
+}
+ul ul {
+margin-bottom: 0;
+}
+pre, code {
+background-color: #f7f7f7;
+border-radius: 3px;
+color: #333;
+white-space: pre-wrap; 
+}
+pre {
+border-radius: 3px;
+margin: 5px 0px 10px 0px;
+padding: 10px;
+}
+pre:not([class]) {
+background-color: #f7f7f7;
+}
+code {
+font-family: Consolas, Monaco, 'Courier New', monospace;
+font-size: 85%;
+}
+p > code, li > code {
+padding: 2px 0px;
+}
+div.figure {
+text-align: center;
+}
+img {
+background-color: #FFFFFF;
+padding: 2px;
+border: 1px solid #DDDDDD;
+border-radius: 3px;
+border: 1px solid #CCCCCC;
+margin: 0 5px;
+}
+h1 {
+margin-top: 0;
+font-size: 35px;
+line-height: 40px;
+}
+h2 {
+border-bottom: 4px solid #f7f7f7;
+padding-top: 10px;
+padding-bottom: 2px;
+font-size: 145%;
+}
+h3 {
+border-bottom: 2px solid #f7f7f7;
+padding-top: 10px;
+font-size: 120%;
+}
+h4 {
+border-bottom: 1px solid #f7f7f7;
+margin-left: 8px;
+font-size: 105%;
+}
+h5, h6 {
+border-bottom: 1px solid #ccc;
+font-size: 105%;
+}
+a {
+color: #0033dd;
+text-decoration: none;
+}
+a:hover {
+color: #6666ff; }
+a:visited {
+color: #800080; }
+a:visited:hover {
+color: #BB00BB; }
+a[href^="http:"] {
+text-decoration: underline; }
+a[href^="https:"] {
+text-decoration: underline; }
+
+code > span.kw { color: #555; font-weight: bold; } 
+code > span.dt { color: #902000; } 
+code > span.dv { color: #40a070; } 
+code > span.bn { color: #d14; } 
+code > span.fl { color: #d14; } 
+code > span.ch { color: #d14; } 
+code > span.st { color: #d14; } 
+code > span.co { color: #888888; font-style: italic; } 
+code > span.ot { color: #007020; } 
+code > span.al { color: #ff0000; font-weight: bold; } 
+code > span.fu { color: #900; font-weight: bold; } 
+code > span.er { color: #a61717; background-color: #e3d2d2; } 
+</style>
+
+
+
+
+</head>
+
+<body>
+
+
+
+
+<h1 class="title toc-ignore">Technical Overview</h1>
+
+
+
+<div id="introduction" class="section level2">
+<h2>Introduction</h2>
+<p>Geostatistics refers to the study of a spatially distributed variable
+of interest, which in theory is defined at every point over a bounded
+study region of interest. Statistical modelling and analysis for
+spatially oriented point-referenced outcomes play a crucial role in
+diverse scientific applications such as earth and environmental
+sciences, ecology, epidemiology, and economics. With the advent of
+Markov chain Monte Carlo (MCMC) algorithms, Bayesian hierarchical models
+have gained massive popularity in analyzing such point-referenced or,
+geostatistical data. These models involve latent spatial processes
+characterized by spatial process parameters, which besides lacking
+substantive relevance in scientific contexts, are also weakly identified
+and hence, impedes convergence of MCMC algorithms. Thus, even for
+moderately large datasets (~<span class="math inline">\(10^3\)</span> or
+higher), the computation for MCMC becomes too onerous for practical
+use.</p>
+<p>We introduce the R package <code>spStack</code> that implements
+Bayesian inference for a class of geostatistical models, where we
+obviate the issues mentioned by sampling from analytically available
+posterior distributions conditional upon some candidate values of the
+spatial process parameters and, subsequently assimilate inference from
+these individual posterior distributions using Bayesian predictive
+stacking. Besides delivering competitive predictive performance as
+compared to fully Bayesian inference using MCMC, our proposed algorithm
+is embarrassingly parallel, thus drastically improves runtime and
+elevating the utility of the package for a diverse group of
+practitioners with limited computational resources at their disposal.
+This package, to the best of our knowledge, is the first to implement
+stacking for Bayesian analysis of spatial data.</p>
+<p>Technical details surrounding the methodology can be found in the
+articles <span class="citation">Zhang, Tang, and Banerjee (<a href="#ref-zhang2024stacking">2025</a>)</span> which discuss the case
+where the distribution of the point-referenced outcomes are Gaussian,
+and, in <span class="citation">Pan et al. (<a href="#ref-pan2024stacking">2025</a>)</span> where the case of
+non-Gaussian outcomes is explored. The code for this package is written
+primarily in C/C++ with additional calls to FORTRAN routines for
+optimized linear algebra operations. We leverage the
+<code>F77_NAME</code> macro to interface with legacy FORTRAN functions
+in conjunction with efficient matrix computation libraries such as <a href="https://netlib.org/blas/">BLAS</a> (Basic Linear Algebra
+Subprograms) and <a href="https://netlib.org/lapack/">LAPACK</a> (Linear
+Algebra Package) to implement our stacking algorithm.</p>
+<p>The remainder of the vignette evolves as follows - the next two
+sections discuss Bayesian hierarchical spatial models for Gaussian and
+non-Gaussian outcomes, which is followed by a section providing brief
+details on predictive stacking and a section dedicated for illustration
+of functions in the package.</p>
+</div>
+<div id="bayesian-gaussian-spatial-regression-models" class="section level2">
+<h2>Bayesian Gaussian spatial regression models</h2>
+Let <span class="math inline">\(\chi = \{s_1, \ldots, s_n\} \in
+\mathcal{D}\)</span> be a be a set of <span class="math inline">\(n\)</span> spatial locations yielding measurements
+<span class="math inline">\(y = (y_1, \ldots, y_n)^{ \scriptstyle \top
+}\)</span> with known values of predictors at these locations collected
+in the <span class="math inline">\(n \times p\)</span> full rank matrix
+<span class="math inline">\(X = [x(s_1), \ldots, x(s_n)]^{ \scriptstyle
+\top }\)</span>. A customary geostatistical model is <span class="math display">\[\begin{equation}
+  y_i = x(s_i)^{ \scriptstyle \top }\beta + z(s_i) + \epsilon_i, \quad i
+= 1, \ldots, n,
+\end{equation}\]</span> where <span class="math inline">\(\beta\)</span>
+is the <span class="math inline">\(p \times 1\)</span> vector of slopes,
+<span class="math inline">\(z(s) \sim \mathsf{GP}(0, R(\cdot, \cdot;
+{\theta_{\text{sp}}}))\)</span> is a zero-centered spatial Gaussian
+process on <span class="math inline">\(\mathcal{D}\)</span> with spatial
+correlation function <span class="math inline">\(R(\cdot, \cdot;
+{\theta_{\text{sp}}})\)</span> characterized by process parameters <span class="math inline">\({\theta_{\text{sp}}}\)</span>, <span class="math inline">\(\sigma^2\)</span> is the spatial variance
+parameter (“partial sill”) and <span class="math inline">\(\epsilon_i
+\sim \mathsf{N}(0, \tau^2), i = 1, \ldots, n\)</span> are i.i.d. with
+variance <span class="math inline">\(\tau^2\)</span> (“nugget”)
+capturing measurement error. The spatial process <span class="math inline">\(z(\cdot)\)</span> is assumed to be independent of
+the measurement errors <span class="math inline">\(\{\epsilon_i, i = 1,
+\ldots, n\}\)</span>. Let <span class="math inline">\(z = (z(s_1),
+\ldots, z(s_n))^{ \scriptstyle \top }\)</span> denotes the realization
+of the spatial process on <span class="math inline">\(\chi\)</span> and
+<span class="math inline">\(n \times n\)</span> correlation matrix <span class="math inline">\(R(\chi; {\theta_{\text{sp}}}) = (R(s_i, s_j
+{\theta_{\text{sp}}}))_{1 \leq i,j \leq n}\)</span>. We build a
+conjugate Bayesian hierarchical spatial model,
+<span class="math display">\[\begin{aligned}
+\begin{split}
+y \mid z, \beta, \sigma^2 &amp;\sim \mathsf{N}(X\beta + z, \delta^2
+\sigma^2 I_n), \\
+z \mid \sigma^2 &amp;\sim \mathsf{N}(0, \sigma^2 R(\chi;
+{\theta_{\text{sp}}})), \\
+\beta \mid \sigma^2 &amp;\sim \mathsf{N}(\mu_\beta, \sigma^2 V_\beta),
+\quad
+\sigma^2 \sim \mathsf{IG}(a_\sigma, b_\sigma),
+\end{split}
+\end{aligned}\]</span>
+<p>where we fix the noise-to-spatial variance ratio <span class="math inline">\(\delta^2 = \tau^2 / \sigma^2\)</span>, the process
+parameters <span class="math inline">\({\theta_{\text{sp}}}\)</span> and
+the hyperparameters <span class="math inline">\(\mu_\beta\)</span>,
+<span class="math inline">\(V_\beta\)</span>, <span class="math inline">\(a_\sigma\)</span> and <span class="math inline">\(b_\sigma\)</span>. In this package, we use the
+Matern covariogram specified by spatial decay parameter <span class="math inline">\(\phi\)</span> and smoothness parameter <span class="math inline">\(\nu\)</span> i.e., <span class="math inline">\({\theta_{\text{sp}}}= \{\phi, \nu\}\)</span>,
+given by <span class="math display">\[\begin{equation}
+R(s, s&#39;; {\theta_{\text{sp}}}) = \frac{(\phi \lvert s - s&#39;
+\rvert)^\nu}{2^{\nu - 1} \Gamma(\nu)} K_\nu (\phi \lvert s - s&#39;
+\rvert)).
+\end{equation}\]</span> We utilize a composition sampling strategy to
+sample the model parameters from their joint posterior distribution
+which can be written as <span class="math display">\[\begin{equation}
+p(\sigma^2, \beta, z \mid y) = p(\sigma^2 \mid y) \times
+p(\beta \mid \sigma^2, y) \times p(z \mid \beta, \sigma^2, y).
+\end{equation}\]</span> We proceed by first sampling <span class="math inline">\(\sigma^2\)</span> from its marginal posterior,
+then given the samples of <span class="math inline">\(\sigma^2\)</span>,
+we sample <span class="math inline">\(\beta\)</span> and subsequently,
+we sample <span class="math inline">\(z\)</span> conditioned on the
+posterior samples of <span class="math inline">\(\beta\)</span> and
+<span class="math inline">\(\sigma^2\)</span> <span class="citation">(<a href="#ref-banerjee_massivespatial">Banerjee 2020</a>)</span>. More
+details can be found in <span class="citation">Zhang, Tang, and Banerjee
+(<a href="#ref-zhang2024stacking">2025</a>)</span>.</p>
+<p>The function <code>spLMexact()</code> delivers samples from this
+posterior distribution conditional on fixed hyperparameters. For
+predictive stacking, use the function <code>spLMstack()</code>.</p>
+</div>
+<div id="bayesian-non-gaussian-spatial-regression-models" class="section level2">
+<h2>Bayesian non-Gaussian spatial regression models</h2>
+<p>Analyzing non-Gaussian spatial data typically requires introducing
+spatial dependence in generalized linear models through the link
+function of an exponential family distribution. Let <span class="math inline">\(y(s)\)</span> be the outcome at location <span class="math inline">\(s \in \mathcal{D}\)</span> endowed with a
+probability law from the natural exponential family, which we denote by
+<span class="math display">\[\begin{equation}
+    y(s) \sim \mathsf{EF}(x(s)^{ \scriptstyle \top }\beta  + z(s); b,
+\psi_y)
+\end{equation}\]</span> for some positive parameter <span class="math inline">\(b &gt; 0\)</span> and unit log partition function
+<span class="math inline">\(\psi_y\)</span>. Fixed effects regression
+and spatial dependence, e.g., <span class="math inline">\(x(s)^{{
+\scriptstyle \top }}\beta + z(s)\)</span>, is introduced in the natural
+parameter, where <span class="math inline">\(x(s)\)</span> is a <span class="math inline">\(p \times 1\)</span> vector of predictors
+referenced with respect to <span class="math inline">\(s\)</span>, <span class="math inline">\(\beta\)</span> is a <span class="math inline">\(p
+\times 1\)</span> vector of slopes measuring the trend, <span class="math inline">\(z(s)\)</span> is a zero-centered spatial process
+on <span class="math inline">\(\mathcal{D}\)</span> specified by a scale
+parameter <span class="math inline">\(\sigma_z\)</span> and a spatial
+correlation function <span class="math inline">\(R(\cdot, \cdot ;
+{\theta_{\text{sp}}})\)</span> with <span class="math inline">\({\theta_{\text{sp}}}\)</span> consisting of
+spatial-temporal decay and smoothness parameters.</p>
+<p>Unlike in Gaussian likelihoods, inference is considerably encumbered
+by the inability to analytically integrate out the random effects and
+reduce the dimension of the parameter space. Iterative algorithms such
+as Markov Chain Monte Carlo (MCMC), thus attempt to sample from a very
+high-dimensional posterior distribution, and convergence is often
+hampered by high auto-correlations and weakly identified spatial process
+parameters <span class="math inline">\({\theta_{\text{sp}}}\)</span>.</p>
+<p>This model is implemented using the function
+<code>spGLMexact()</code> when using fixed hyperparameters, and
+<code>spGLMstack()</code> when using predictive stacking.</p>
+<p>We consider the following three point-referenced data -</p>
+<ul>
+<li><p><strong>Poisson count data</strong>: Here <span class="math inline">\(b = 1\)</span> and <span class="math inline">\(\psi_y(t) = e^t\)</span>. <span class="math display">\[\begin{equation}
+\begin{split}
+y(s_i) &amp;\sim \mathsf{Poisson}(\lambda(s_i)), \quad i = 1, \dots,
+n.\\
+\lambda(s_i) &amp; = \exp(x(s_i)^{ \scriptstyle \top }\beta + z(s_i))
+\end{split}
+\end{equation}\]</span> This is accessed by setting
+<code>family = &quot;poisson&quot;</code> in the above functions.</p></li>
+<li><p><strong>Binomial count data</strong>: Here <span class="math inline">\(b = m(s_i)\)</span> for each <span class="math inline">\(i\)</span> and <span class="math inline">\(\psi_y(t) = \log(1 + e^t)\)</span>. <span class="math display">\[\begin{equation}
+\begin{split}
+y(s_i) &amp;\sim \mathsf{Binomial}(m(s_i), \pi(s_i)), \quad i = 1,
+\dots, n.\\
+\pi(s_i) &amp; = \mathrm{ilogit}(x(s_i)^{ \scriptstyle \top }\beta +
+z(s_i))
+\end{split}
+\end{equation}\]</span> This is accessed by setting
+<code>family = &quot;binomial&quot;</code> in the above functions.</p></li>
+<li><p><strong>Binary data</strong>: Here <span class="math inline">\(b
+= 1\)</span> and <span class="math inline">\(\psi_y(t) = \log(1 +
+e^t)\)</span>. <span class="math display">\[\begin{equation}
+\begin{split}
+y(s_i) &amp;\sim \mathsf{Bernoulli}(\pi(s_i)), \quad i = 1, \dots, n.\\
+\pi(s_i) &amp; = \mathrm{ilogit}(x(s_i)^{ \scriptstyle \top }\beta +
+z(s_i))
+\end{split}
+\end{equation}\]</span> This is accessed by setting
+<code>family = &quot;binary&quot;</code> in the above functions.</p></li>
+</ul>
+<p>Following <span class="citation">Bradley and Clinch (<a href="#ref-bradleyclinch2024">2024</a>)</span>, we introduce a Bayesian
+hierarchical spatial model as <span class="math display">\[\begin{equation}
+\begin{split}
+y(s_i) \mid \beta, z, \xi &amp; \sim \mathsf{EF}\left(x(s_i)^{
+\scriptstyle \top }\beta + z(s_i) +
+\xi_i - \mu_i; b_i, \psi_y\right), i = 1, \ldots, n\\
+\beta \mid \sigma^2_\beta &amp;\sim \mathsf{N}(0, \sigma^2_\beta
+V_\beta), \quad
+\sigma^2_\beta \sim \mathsf{IG}(\nu_\beta/2, \nu_\beta/2)\\
+z \mid \sigma^2_z &amp;\sim \mathsf{N}\left(0, \sigma^2_z R(\chi;
+{\theta_{\text{sp}}})\right), \quad
+\sigma^2_z \sim \mathsf{IG}(\nu_z/2, \nu_z/2),\\
+\xi \mid \beta, z, \sigma^2_\xi, \alpha_\epsilon &amp;\sim
+\mathsf{GCM_c}\left(\tilde{\mu}_\xi, H_\xi, \epsilon, \kappa_\xi;
+\psi_\xi\right),
+\end{split}
+\end{equation}\]</span> where <span class="math inline">\(\mu = (\mu_1,
+\ldots, \mu_n)^{ \scriptstyle \top }\)</span> denotes the discrepancy
+parameter. We fix the spatial process parameters <span class="math inline">\({\theta_{\text{sp}}}\)</span>, the boundary
+adjustment parameter <span class="math inline">\(\epsilon\)</span> and
+the hyperparameters <span class="math inline">\(V_\beta\)</span>, <span class="math inline">\(\nu_\beta\)</span>, <span class="math inline">\(\nu_z\)</span> and <span class="math inline">\(\sigma^2_\xi\)</span>. The term <span class="math inline">\(\xi\)</span> is known as the fine-scale variation
+term which is given a conditional generalized conjugate multivariate
+distribution (<span class="math inline">\(\mathrm{GCM_c}\)</span>) as
+prior. For details, see <span class="citation">Pan et al. (<a href="#ref-pan2024stacking">2025</a>)</span>.</p>
+</div>
+<div id="bayesian-non-gaussian-spatial-temporal-regression-model" class="section level2">
+<h2>Bayesian non-Gaussian spatial-temporal regression model</h2>
+<p>We consider a rich family of Bayesian spatial-temporal model with
+spatially-temporally varying regression coefficients. Suppose <span class="math inline">\(\ell = (s, t)\)</span>, with location <span class="math inline">\(s \in \mathcal{D}\)</span> and time <span class="math inline">\(t \in \mathcal{T}\)</span>, denote a
+spatial-temporal coordinate in <span class="math inline">\(\mathcal{L} =
+\mathcal{D} \times \mathcal{T}\)</span>.</p>
+<p>Let <span class="math inline">\(\mathcal{L} = \{\ell_1, \ldots,
+\ell_n\}\)</span> be a fixed set of <span class="math inline">\(n\)</span> distinct space-time coordinates in
+<span class="math inline">\(\mathcal{D}\)</span>, where <span class="math inline">\(y(\mathcal{L}) = (y(\ell_1), \dots,
+y(\ell_n))^\top\)</span>, which we simply denote by <span class="math inline">\(y\)</span>, is the vector of observed outcomes,
+each distributed as a member of the natural exponential family with log
+partition function <span class="math inline">\(\psi_y\)</span>. Suppose,
+<span class="math inline">\(x(\ell_i)\)</span> is a <span class="math inline">\(p\times 1\)</span> vector of predictors, <span class="math inline">\(\beta\)</span> is the corresponding <span class="math inline">\(p \times 1\)</span> vector of slopes (fixed
+effects), <span class="math inline">\(\tilde{x}(\ell_i)\)</span> is
+<span class="math inline">\(r\times 1\)</span> (<span class="math inline">\(r \leq p\)</span>) consisting of predictors in
+<span class="math inline">\(x(\ell_i)\)</span> that are posited to have
+spatially-temporally varying regression coefficients <span class="math inline">\(z(\ell_i) = (z_1(\ell_i), \ldots,
+z_r(\ell_i))^\top\)</span>, where each <span class="math inline">\(z_j(\ell_i)\)</span> is a spatially-temporally
+varying coefficient for the predictor <span class="math inline">\(\tilde{x}_j(\ell_i)\)</span>, <span class="math inline">\(\xi_i\)</span> is a fine-scale variation term and
+<span class="math inline">\(\mu_i\)</span> is the discrepancy parameter
+(see above). We introduce spatially-temporally varying coefficients in
+<span class="math inline">\(\eta(\ell)\)</span> as <span class="math display">\[\begin{equation}
+\begin{split}
+    y(\ell_i) &amp;\mid \beta, z(\ell_i), \xi_i, \mu_i
+\overset{\text{ind}}{\sim} \mathsf{EF}\left(\eta(\ell_i) + \xi_i -
+\mu_i; b_i, \psi_y \right), \ i=1,\ldots,n\;,\\
+    \eta(\ell) &amp;= x(\ell)^{ \scriptstyle \top }\beta +
+\tilde{x}(\ell)^{{ \scriptstyle \top }}z(\ell), \quad  \beta \mid
+\sigma^2_\beta, \mu_\beta, V_\beta \sim \mathsf{N}(\mu_\beta,
+\sigma^2_\beta V_\beta), \quad \sigma^2_\beta \sim
+\pi_\beta(\sigma^2_\beta) \;,\\
+    z(\ell) &amp;\mid \theta_z, {\theta_{\text{sp}}}\sim \mathsf{GP}(0,
+C_z(\cdot, \cdot; {\theta_{\text{sp}}}, \theta_z))\;,\quad \theta_z \sim
+\pi_{z}(\theta_z)\;, \\
+    \xi &amp;\mid \beta, z, \mu, \alpha_\epsilon, \kappa_\epsilon,
+\sigma^2_\xi \sim \mathsf{GCM_c}(\tilde{\mu}_\xi, H_\xi, \alpha_\xi,
+\kappa_\xi, D_\xi, \pi_\xi; \psi_\xi), \ \sigma^2_\xi \sim
+\pi_\xi(\sigma^2_\xi), \ p(\mu) \propto 1 \;,
+\end{split}
+\end{equation}\]</span> where <span class="math inline">\(z(\ell) =
+(z_1(\ell), \ldots, z_r(\ell))^{ \scriptstyle \top }\)</span> is a
+multivariate Gaussian process with a separable cross-covariance function
+<span class="math inline">\(C_z(\cdot, \cdot; {\theta_{\text{sp}}},
+\theta_z)\)</span>, characterized by process parameters <span class="math inline">\({\theta_{\text{sp}}}\)</span> which controls the
+within-process spatial-temporal correlation, and <span class="math inline">\(\theta_z\)</span> which controls the
+between-process covariance matrix . Given <span class="math inline">\(\theta_z\)</span>, the <span class="math inline">\(nr \times 1\)</span> vector <span class="math inline">\(z = (z_1^{ \scriptstyle \top }, \ldots, z_r^{
+\scriptstyle \top })^{ \scriptstyle \top }\)</span>, where <span class="math inline">\(z_j = (z_j(\ell_1), \ldots, z_j(\ell_n))^{
+\scriptstyle \top }\)</span> for <span class="math inline">\(j = 1,
+\ldots, r\)</span>, follows a multivariate Gaussian distribution with
+mean <span class="math inline">\(0\)</span> and <span class="math inline">\(nr \times nr\)</span> covariance matrix <span class="math inline">\(C_z(\mathcal{L}; {\theta_{\text{sp}}},
+\theta_z)\)</span>.</p>
+<p>This model is implemented by the function <code>stvcGLMexact()</code>
+under fixed hyperparameters, and <code>stvcGLMstack()</code> when using
+predictive stacking. We also implement different specifications for
+<span class="math inline">\(C_z\)</span> in this package as follows.</p>
+<ol style="list-style-type: decimal">
+<li><p><strong>Independent spatial-temporal process</strong>: We
+consider <span class="math inline">\(r\)</span> Gaussian
+spatial-temporal processes <span class="math display">\[\begin{equation}\label{eq:z_ind}
+\begin{split}
+\text{Independent processes: } z_j(\ell) \mid\sigma_{z_j}^2,
+{\theta_{\text{sp}}}_j &amp; \overset{\text{ind}}{\sim} \mathsf{GP}(0,
+\sigma_{z_j}^2 R_j(\cdot, \cdot; {\theta_{\text{sp}}}_j)),\\
+\sigma_{z_j}^2 &amp; \sim \mathsf{IG}(\nu_{z_j}/2, \nu_{z_j}/2), \quad j
+= 1, \ldots, r,
+\end{split}
+\end{equation}\]</span> where <span class="math inline">\(\sigma_{z_j}^2\)</span> is the variance parameter
+corresponding to process <span class="math inline">\(z_j(\ell)\)</span>.
+This corresponds to the covariance matrix <span class="math inline">\(C_z(\mathcal{L}; {\theta_{\text{sp}}}, \theta_z) =
+\oplus_{j = 1}^r \sigma_{z_j}^2 R_j({\theta_{\text{sp}}}_j)\)</span>
+with <span class="math inline">\({\theta_{\text{sp}}}= \{
+{\theta_{\text{sp}}}_j : j = 1, \ldots, r\}\)</span>, where <span class="math inline">\({\theta_{\text{sp}}}_j\)</span> denotes covariance
+kernel parameters for the <span class="math inline">\(j\)</span>th
+process, and <span class="math inline">\(\theta_z = \{\sigma^2_{z_1},
+\ldots, \sigma^2_{z_r}\}\)</span>. This is accessed by setting the
+option <code>process.type = &quot;independent&quot;</code> in the above
+functions.</p></li>
+<li><p><strong>Independent shared spatial-temporal process</strong>:
+This corresponds to the above with <span class="math inline">\({\theta_{\text{sp}}}_j =
+{\theta_{\text{sp}}}\)</span> and <span class="math inline">\(\sigma^2_{zj} = \sigma^2_z\)</span> for all <span class="math inline">\(j = 1, \ldots, r\)</span>. This is accessed by
+setting the option <code>process.type = &quot;independent.shared&quot;</code> in
+the above functions.</p></li>
+<li><p><strong>Multivariate spatial-temporal process</strong>: We can
+introduce dependence among the elements of the <span class="math inline">\(r\times 1\)</span> vector <span class="math inline">\(z(\ell)\)</span> using <span class="math display">\[\begin{equation}\label{eq:multi_z}
+\text{Multivariate process: }z(\ell) \mid\Sigma \sim \mathsf{GP}(0,
+R(\cdot, \cdot; {\theta_{\text{sp}}})\Sigma), \quad \Sigma \sim
+\mathsf{IW}(\nu_z + 2r, \Psi)\;,
+\end{equation}\]</span> where <span class="math inline">\(\mathcal{GP}
+(0, R(\cdot, \cdot; {\theta_{\text{sp}}})\Sigma)\)</span> is an <span class="math inline">\(r\times 1\)</span> multivariate Gaussian process
+with matrix-valued cross-covariance function <span class="math inline">\(R(\cdot, \cdot;
+{\theta_{\text{sp}}})\Sigma\)</span> and <span class="math inline">\(\Sigma\)</span> is an <span class="math inline">\(r \times r\)</span> positive definite random
+matrix. This corresponds to the spatial-temporal covariance matrix <span class="math inline">\(C_z(\mathcal{L}; {\theta_{\text{sp}}}, \theta_z) =
+\Sigma \otimes R({\theta_{\text{sp}}})\)</span> with <span class="math inline">\(\theta_z = \Sigma\)</span>. We place an
+inverse-Wishart prior on the scale parameter with shape <span class="math inline">\(\nu_z + 2r\)</span> and <span class="math inline">\(r\times r\)</span> positive definite scale matrix
+<span class="math inline">\(\Psi\)</span>, given by <span class="math inline">\(\pi(\theta_z) = \mathsf{IW}(\Sigma \mid\nu_z + 2r,
+\Psi)\)</span>. This is accessed by setting the option
+<code>process.type = &quot;multivariate&quot;</code> in the above
+functions.</p></li>
+</ol>
+</div>
+<div id="predictive-stacking" class="section level2">
+<h2>Predictive stacking</h2>
+<p>Following <span class="citation">Yao et al. (<a href="#ref-yao2018stacking">2018</a>)</span>, we consider a set of
+candidate models based on a grid of values of the parameters in <span class="math inline">\(\{ {\theta_{\text{sp}}}, \delta^2 \}\)</span> for
+the Gaussian case, and <span class="math inline">\(\{
+{\theta_{\text{sp}}}, \epsilon \}\)</span> for the non-Gaussian case, as
+will be supplied by the user. We build a set of candidate models based
+on the Cartesian product of the collection of values for each individual
+parameter as <span class="math inline">\(\mathcal{M} = \{M_1, \ldots,
+M_G\}\)</span>. Then, for each <span class="math inline">\(g = 1,
+\ldots, G\)</span>, we sample from the posterior distribution <span class="math inline">\(p(\sigma^2, \beta, z \mid y, M_g)\)</span> under
+the model <span class="math inline">\(M_g\)</span> and find
+leave-one-out predictive densities <span class="math inline">\(p(y_i
+\mid y_{-i}, M_g)\)</span>. Then we solve the optimization problem <span class="math display">\[\begin{equation}
+\begin{split}
+\max_{w_1, \ldots, w_G}&amp; \, \frac{1}{n} \sum_{i = 1}^n \log \sum_{g
+= 1}^G
+w_g p(y_i \mid y_{-i}, M_g) \\
+\text{subject to} &amp; \quad w_g \geq 0, \sum_{g = 1}^G w_g = 1
+\end{split}
+\end{equation}\]</span> to find the optimal stacking weights <span class="math inline">\(\hat{w}_1, \ldots, \hat{w}_G\)</span>. After
+obtaining the optimal stacking weights, posterior inference of any
+quantity of interest subsequently proceed from the <em>stacked</em>
+posterior, <span class="math display">\[\begin{equation}
+\tilde{p}(\cdot \mid y) = \sum_{g = 1}^G \hat{w}_g p(\cdot \mid y, M_g).
+\end{equation}\]</span></p>
+</div>
+<div id="references" class="section level2 unnumbered">
+<h2 class="unnumbered">References</h2>
+<div id="refs" class="references csl-bib-body hanging-indent" entry-spacing="0">
+<div id="ref-banerjee_massivespatial" class="csl-entry">
+Banerjee, Sudipto. 2020. <span>“Modeling Massive Spatial Datasets Using
+a Conjugate <span>B</span>ayesian Linear Modeling Framework.”</span>
+<em>Spatial Statistics</em> 37: 100417. <a href="https://doi.org/10.1016/j.spasta.2020.100417">https://doi.org/10.1016/j.spasta.2020.100417</a>.
+</div>
+<div id="ref-bradleyclinch2024" class="csl-entry">
+Bradley, Jonathan R., and Madelyn Clinch. 2024. <span>“Generating
+Independent Replicates Directly from the Posterior Distribution for a
+Class of Spatial Hierarchical Models.”</span> <em>Journal of
+Computational and Graphical Statistics</em> 0 (0): 1–17. <a href="https://doi.org/10.1080/10618600.2024.2365728">https://doi.org/10.1080/10618600.2024.2365728</a>.
+</div>
+<div id="ref-pan2024stacking" class="csl-entry">
+Pan, Soumyakanti, Lu Zhang, Jonathan R. Bradley, and Sudipto Banerjee.
+2025. <span>“Bayesian Inference for Spatial-Temporal Non-Gaussian Data
+Using Predictive Stacking.”</span> <a href="https://doi.org/10.48550/arXiv.2406.04655">https://doi.org/10.48550/arXiv.2406.04655</a>.
+</div>
+<div id="ref-yao2018stacking" class="csl-entry">
+Yao, Yuling, Aki Vehtari, Daniel Simpson, and Andrew Gelman. 2018.
+<span>“<span class="nocase">Using Stacking to Average
+<span>B</span>ayesian Predictive Distributions (with
+Discussion)</span>.”</span> <em>Bayesian Analysis</em> 13 (3): 917–1007.
+<a href="https://doi.org/10.1214/17-BA1091">https://doi.org/10.1214/17-BA1091</a>.
+</div>
+<div id="ref-zhang2024stacking" class="csl-entry">
+Zhang, Lu, Wenpin Tang, and Sudipto Banerjee. 2025. <span>“Bayesian
+Geostatistics Using Predictive Stacking.”</span> <a href="https://doi.org/10.48550/arXiv.2304.12414">https://doi.org/10.48550/arXiv.2304.12414</a>.
+</div>
+</div>
+</div>
+
+
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
