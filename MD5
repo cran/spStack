@@ -1,6 +1,6 @@
-5d029ba8ea77905d7a9f13d3b24408a1 *DESCRIPTION
+ae8e01f92dbb11c0baf1995c6463fa66 *DESCRIPTION
 b33a344a5208d5536e1d8ab5517d898c *NAMESPACE
-5b4d8310067f15c2b9bc17a73931f00f *NEWS.md
+c1e8d67794b6b4020878a7b3952891fc *NEWS.md
 dac2e57fc10bd790cc2e8e541d60b57d *R/cholUpdate.R
 f594b84a7ed33b1c7635f9c5047a1b31 *R/iDist.R
 af1ec0d19428fa09a28cfa43a0375c75 *R/predict.R
@@ -42,7 +42,7 @@ b2dbfcb3660c2569cc6b5ccaed0332bd *inst/doc/spatial-temporal.R
 1bcc9aaa70731544411db25fb816621c *inst/doc/spatial-temporal.html
 5ad26e7bf40d629c047d9ba6759e4a47 *inst/doc/spatial.R
 61a8fd2f10be64c3277e58fa45e27e24 *inst/doc/spatial.Rmd
-dff0aaafc8673b8fdd5959198466c791 *inst/doc/spatial.html
+76489604b7cfe3d1c0bae967645d8f31 *inst/doc/spatial.html
 5e270ae6034b339c2a13d20a5f7d2dec *inst/doc/technical_overview.R
 8fda234d3ed6300028a89d041fcaf586 *inst/doc/technical_overview.Rmd
 14d25e107295774878f388c71b16b569 *inst/doc/technical_overview.html
@@ -89,7 +89,7 @@ b0b1f02ced287907601fd1cbc6ebd80f *src/spLMexactLOO.cpp
 e7c6a5a88f4fc42ba69b5d83c826521c *src/spStack.h
 46029b80301b896843b0588614cfc852 *src/stvcGLMexact.cpp
 435007a6073c0cdcdb64e7f99f207aa1 *src/stvcGLMexactLOO.cpp
-d679cbd8b374f141fdc341625fc63593 *src/util.cpp
+847fd37137254e7b41359c42bdc3f602 *src/util.cpp
 02e6be29fa65c761dfc982da130cddbe *src/util.h
 4d0a0b9511994b44d2a91a55f8447de5 *tests/testthat.R
 1d7190bc5562f8bd6c6f8d54173fbec0 *tests/testthat/test-cholUpdates.R
